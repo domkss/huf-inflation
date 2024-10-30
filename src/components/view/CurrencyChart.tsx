@@ -1,5 +1,6 @@
 import React from "react";
 import CurvedLineChart from "../charts/CurvedLineChart";
+import ChartStatView from "../charts/ChartStatView";
 
 async function CurrencyChart() {
   const startDate = "2014-01-01";
@@ -33,11 +34,15 @@ async function CurrencyChart() {
 
   const mainLabel = baseCurrency + "/" + targetCurrency;
   const labels = Object.keys(data.rates);
-  const values = labels.map((date) => rates[date].HUF);
+  const values = labels.map((date) => rates[date].HUF as number);
 
   return (
     <div className='p-4'>
-      <CurvedLineChart yTitle='HUF' data={values} lables={labels} mainLabel={mainLabel} timeUnit='month' />
+      <div className='text-center'>{mainLabel}</div>
+      <div className='text-center'>
+        <ChartStatView labels={labels} values={values} />
+      </div>
+      <CurvedLineChart data={values} lables={labels} timeUnit='month' />
       <div className='text-center'>selector</div>
     </div>
   );

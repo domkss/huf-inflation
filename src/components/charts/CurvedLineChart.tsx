@@ -7,7 +7,7 @@ import "chartjs-adapter-date-fns";
 // Register the necessary components from Chart.js
 Chart.register(...registerables);
 type TimeUnits =
-  | "false"
+  | false
   | "month"
   | "millisecond"
   | "second"
@@ -21,9 +21,7 @@ type TimeUnits =
 
 interface CurvedLineChartProps {
   className?: string;
-  yTitle: string;
   xTitle?: string;
-  mainLabel: string;
   lables: string[];
   data: number[];
   timeUnit: TimeUnits;
@@ -44,7 +42,6 @@ const CurvedLineChart: React.FC<CurvedLineChartProps> = (props) => {
         labels: props.lables,
         datasets: [
           {
-            label: props.mainLabel,
             fill: true,
             lineTension: 0.4,
             backgroundColor: "rgba(75, 192, 192, 0.2)",
@@ -60,7 +57,7 @@ const CurvedLineChart: React.FC<CurvedLineChartProps> = (props) => {
         responsive: true,
         plugins: {
           legend: {
-            position: "top",
+            display: false,
           },
           tooltip: {
             mode: "nearest",
@@ -79,11 +76,12 @@ const CurvedLineChart: React.FC<CurvedLineChartProps> = (props) => {
             },
           },
           y: {
-            title: {
-              display: true,
-              text: props.yTitle,
-            },
             beginAtZero: false,
+            ticks: {
+              callback: function (value) {
+                return value + " HUF";
+              },
+            },
           },
         },
       },
