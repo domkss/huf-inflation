@@ -4,17 +4,51 @@ import MapCalculator from "../components/view/MapCalculator";
 export default async function Home() {
   async function getExchangeData() {
     const dataToRequest = [
-      { startDate: "2014-01-01", endDate: "2024-12-30", baseCurrency: "EUR", targetCurrency: "HUF" },
-      { startDate: "2014-01-01", endDate: "2024-12-30", baseCurrency: "USD", targetCurrency: "HUF" },
-      { startDate: "2014-01-01", endDate: "2024-12-30", baseCurrency: "CHF", targetCurrency: "HUF" },
+      {
+        startDate: "2014-01-01",
+        baseCurrency: "EUR",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Euró",
+      },
+      {
+        startDate: "2014-01-01",
+        baseCurrency: "USD",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Amerikai dollár",
+      },
+      {
+        startDate: "2014-01-01",
+        baseCurrency: "CHF",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Svájci frank",
+      },
+      {
+        startDate: "2014-01-01",
+        baseCurrency: "CZK",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Cseh korona",
+      },
+      {
+        startDate: "2014-01-01",
+        baseCurrency: "PLN",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Lengyel zloty",
+      },
+      {
+        startDate: "2014-01-01",
+        baseCurrency: "CNY",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Kínai jüan",
+      },
     ];
 
     return Promise.all(
       dataToRequest.map(async (item) => {
         const startDate = item.startDate;
-        const endDate = item.endDate;
+        const endDate = new Date().toISOString().split("T")[0];
         const baseCurrency = item.baseCurrency;
         const targetCurrency = item.targetCurrency;
+        const baseCurrencyLongName = item.baseCurrencyLongName;
         // Fetch data from the Frankfurter API
         const res = await fetch(
           `https://api.frankfurter.app/${startDate}..${endDate}?base=${baseCurrency}&symbols=${targetCurrency}`,
@@ -39,11 +73,11 @@ export default async function Home() {
           return null;
         }
 
-        const mainLabel = baseCurrency + "/" + targetCurrency;
+        const shortLabel = baseCurrency + "/" + targetCurrency;
         const labels = Object.keys(data.rates);
         const values = labels.map((date) => rates[date].HUF as number);
 
-        return { mainLabel, labels, values, targetCurrency };
+        return { shortLabel, labels, values, targetCurrency, baseCurrencyLongName };
       })
     );
   }

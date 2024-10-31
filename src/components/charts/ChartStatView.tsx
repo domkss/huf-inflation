@@ -52,7 +52,7 @@ function ChartStatView({ values, labels }: ChartStatViewProps) {
         <div className='grid grid-cols-1 gap-y-2 text-center sm:text-left'>
           <div className='flex flex-col items-center sm:items-start'>
             <span className='text-gray-700 break-words'>{label}:</span>
-            <span className={clsx("break-words", { "text-red-400": sign === "+" })}>
+            <span className={clsx("break-words font-semibold", { "text-red-400": sign === "+" })}>
               {sign}
               {percentageChange.toFixed(1)}%
             </span>

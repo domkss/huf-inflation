@@ -6,7 +6,13 @@ import clsx from "clsx";
 import { useState, useEffect } from "react";
 
 interface CurrencyChartProps {
-  data: { mainLabel: string; labels: string[]; values: number[]; targetCurrency: string }[];
+  data: {
+    shortLabel: string;
+    labels: string[];
+    values: number[];
+    targetCurrency: string;
+    baseCurrencyLongName: string;
+  }[];
 }
 
 function CurrencyChart(props: CurrencyChartProps) {
@@ -30,7 +36,8 @@ function CurrencyChart(props: CurrencyChartProps) {
 
   //Return null for an empty dataset
   if (!props.data || props.data.length === 0) return null;
-  const mainLabel = props.data[selectedItem].mainLabel;
+  const shortLabel = props.data[selectedItem].shortLabel;
+  const baseCurrencyLongName = props.data[selectedItem].baseCurrencyLongName;
   const labels = props.data[selectedItem].labels;
   const values = props.data[selectedItem].values;
   const targetCurrency = props.data[selectedItem].targetCurrency;
@@ -38,7 +45,9 @@ function CurrencyChart(props: CurrencyChartProps) {
   return (
     <div className='p-4'>
       <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-        <div className='text-center mb-2'>{mainLabel}</div>
+        <div className='text-center mb-2'>
+          {shortLabel} - {baseCurrencyLongName}
+        </div>
         <div className='text-center my-1'>
           <ChartStatView labels={labels} values={values} />
         </div>
