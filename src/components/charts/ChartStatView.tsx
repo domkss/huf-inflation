@@ -49,23 +49,31 @@ function ChartStatView({ values, labels }: ChartStatViewProps) {
       const percentageChange = ((latestValue - previousValue) / previousValue) * 100;
       const sign = percentageChange >= 0 ? "+" : "";
       result.push(
-        <span>
-          {label}:{" "}
-          <span className={clsx({ "text-red-400": sign === "+" })}>
-            {sign}
-            {percentageChange.toFixed(1)}%
-          </span>
-        </span>
+        <div className='grid grid-cols-1 gap-y-2 text-center sm:text-left'>
+          <div className='flex flex-col items-center sm:items-start'>
+            <span className='text-gray-700 break-words'>{label}:</span>
+            <span className={clsx("break-words", { "text-red-400": sign === "+" })}>
+              {sign}
+              {percentageChange.toFixed(1)}%
+            </span>
+          </div>
+        </div>
       );
     } else {
-      result.push(<span>{label}: N/A</span>);
+      result.push(
+        <div className='grid grid-cols-2 gap-y-2 text-center sm:text-left'>
+          <div className='flex flex-col items-center sm:items-start'>
+            <span className='text-gray-700 break-words'>{label}: N/A</span>
+          </div>
+        </div>
+      );
     }
   }
 
   return (
-    <div className='flex flex-row justify-center'>
+    <div className='w-full flex flex-row justify-around'>
       {result.map((content, key) => (
-        <div className={"mr-2"} key={key}>
+        <div className={""} key={key}>
           {content}
         </div>
       ))}

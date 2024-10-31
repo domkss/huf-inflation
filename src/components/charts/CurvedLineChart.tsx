@@ -25,6 +25,7 @@ interface CurvedLineChartProps {
   lables: string[];
   data: number[];
   timeUnit: TimeUnits;
+  targetCurrency: string;
 }
 
 const CurvedLineChart: React.FC<CurvedLineChartProps> = (props) => {
@@ -79,7 +80,7 @@ const CurvedLineChart: React.FC<CurvedLineChartProps> = (props) => {
             beginAtZero: false,
             ticks: {
               callback: function (value) {
-                return value + " HUF";
+                return value + ` ${props.targetCurrency}`;
               },
             },
           },
@@ -91,7 +92,7 @@ const CurvedLineChart: React.FC<CurvedLineChartProps> = (props) => {
     return () => {
       myChart.destroy();
     };
-  }, []);
+  }, [props.data, props.lables, props.timeUnit, props.xTitle]);
 
   return (
     <div className={props.className}>
