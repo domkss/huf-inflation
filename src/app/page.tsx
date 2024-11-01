@@ -9,36 +9,42 @@ export default async function Home() {
         baseCurrency: "EUR",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Euró",
+        countryFlag: <span className='fi fi-eu shadow-sm' />,
       },
       {
         startDate: "2014-01-01",
         baseCurrency: "USD",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Amerikai dollár",
+        countryFlag: <span className='fi fi-us shadow-sm' />,
       },
       {
         startDate: "2014-01-01",
         baseCurrency: "CHF",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Svájci frank",
+        countryFlag: <span className='fi fi-ch shadow-sm' />,
       },
       {
         startDate: "2014-01-01",
         baseCurrency: "CZK",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Cseh korona",
+        countryFlag: <span className='fi fi-cz shadow-sm' />,
       },
       {
         startDate: "2014-01-01",
         baseCurrency: "PLN",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Lengyel zloty",
+        countryFlag: <span className='fi fi-pl shadow-sm' />,
       },
       {
         startDate: "2014-01-01",
         baseCurrency: "CNY",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Kínai jüan",
+        countryFlag: <span className='fi fi-cn shadow-sm' />,
       },
     ];
 
@@ -49,6 +55,7 @@ export default async function Home() {
         const baseCurrency = item.baseCurrency;
         const targetCurrency = item.targetCurrency;
         const baseCurrencyLongName = item.baseCurrencyLongName;
+        const countryFlag = item.countryFlag;
         // Fetch data from the Frankfurter API
         const res = await fetch(
           `https://api.frankfurter.app/${startDate}..${endDate}?base=${baseCurrency}&symbols=${targetCurrency}`,
@@ -77,7 +84,7 @@ export default async function Home() {
         const labels = Object.keys(data.rates);
         const values = labels.map((date) => rates[date].HUF as number);
 
-        return { shortLabel, labels, values, targetCurrency, baseCurrencyLongName };
+        return { shortLabel, labels, values, targetCurrency, baseCurrencyLongName, countryFlag };
       })
     );
   }

@@ -15,19 +15,19 @@ function ChartStatView({ values, labels }: ChartStatViewProps) {
 
   // Define the time offsets to calculate changes for
   const timeOffsets = {
-    "10 year": new Date(latestDate),
-    "5 year": new Date(latestDate),
-    "1 year": new Date(latestDate),
-    "6 month": new Date(latestDate),
-    "1 month": new Date(latestDate),
+    "10 év": new Date(latestDate),
+    "5 év": new Date(latestDate),
+    "1 év": new Date(latestDate),
+    "6 hónap": new Date(latestDate),
+    "1 hónap": new Date(latestDate),
   };
 
   // Subtract years and months from the latest date for each offset
-  timeOffsets["10 year"].setFullYear(latestDate.getFullYear() - 10);
-  timeOffsets["5 year"].setFullYear(latestDate.getFullYear() - 5);
-  timeOffsets["1 year"].setFullYear(latestDate.getFullYear() - 1);
-  timeOffsets["6 month"].setMonth(latestDate.getMonth() - 6);
-  timeOffsets["1 month"].setMonth(latestDate.getMonth() - 1);
+  timeOffsets["10 év"].setFullYear(latestDate.getFullYear() - 10);
+  timeOffsets["5 év"].setFullYear(latestDate.getFullYear() - 5);
+  timeOffsets["1 év"].setFullYear(latestDate.getFullYear() - 1);
+  timeOffsets["6 hónap"].setMonth(latestDate.getMonth() - 6);
+  timeOffsets["1 hónap"].setMonth(latestDate.getMonth() - 1);
 
   // Function to find the closest date value in the past or on target date
   function findClosestValue(targetDate: Date): number | null {
@@ -52,7 +52,9 @@ function ChartStatView({ values, labels }: ChartStatViewProps) {
         <div className='grid grid-cols-1 gap-y-2 text-center sm:text-left'>
           <div className='flex flex-col items-center sm:items-start'>
             <span className='text-gray-700 break-words'>{label}:</span>
-            <span className={clsx("break-words font-semibold", { "text-red-400": sign === "+" })}>
+            <span
+              className={clsx("break-words font-semibold", percentageChange > 0 ? "text-red-400" : "text-emerald-400")}
+            >
               {sign}
               {percentageChange.toFixed(1)}%
             </span>
