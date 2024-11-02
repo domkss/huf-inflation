@@ -119,7 +119,7 @@ function Statistics(props: StatisticsProps) {
   });
 
   return (
-    <div className='border sm:rounded-lg to-[#ffffff28] border-[#1b2c686c] bg-gradient-to-r from-[#6ff8ed1e] shadow-sm'>
+    <div className='h-full border border-[#1b2c686c] shadow-sm'>
       <div className='flex flex-row'>
         <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
         <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>

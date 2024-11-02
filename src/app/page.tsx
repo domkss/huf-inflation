@@ -133,12 +133,14 @@ export default async function Home() {
   const akkBondData = await getAKKBondData();
 
   return (
-    <main className='w-full min-h-svh flex flex-col sm:flex-row'>
-      <div className='sm:mx-4 sm:flex-1'>
-        <Statistics exchangeData={currencyExchangeData} bondData={akkBondData} />
-      </div>
-      <div className='sm:mx-4 flex-1'>
-        <CurrencyExchangeRateChart currencyExchangeData={currencyExchangeData} />
+    <main className='w-full min-h-svh'>
+      <div className='flex flex-col lg:flex-row  min-h-svh'>
+        <div className='sm:flex-1'>
+          <Statistics exchangeData={currencyExchangeData} bondData={akkBondData} />
+        </div>
+        <div className='flex-1'>
+          <CurrencyExchangeRateChart currencyExchangeData={currencyExchangeData} />
+        </div>
       </div>
     </main>
   );

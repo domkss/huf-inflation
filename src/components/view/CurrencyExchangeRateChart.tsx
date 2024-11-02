@@ -56,7 +56,7 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   const dayliChange = values.at(-1)! - values.at(-2)!;
 
   return (
-    <div className='border sm:rounded-lg to-[#ffffff28] border-[#1b2c686c] bg-gradient-to-r from-[#6ff8ed1e] shadow-sm'>
+    <div className='h-full border border-[#1b2c686c] shadow-sm'>
       <div className='flex flex-row'>
         <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
         <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
@@ -82,7 +82,7 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
             <ChartStatView labels={labels} values={values} />
           </div>
         </div>
-        <div className='border-t-[2px] border-indigo-500 p-2 sm:p-4'>
+        <div className='lg:border-t-[2px] border-indigo-500 p-2 sm:p-4'>
           <CurvedLineChart data={values} lables={labels} timeUnit='month' targetCurrency={targetCurrency} />
         </div>
       </div>
