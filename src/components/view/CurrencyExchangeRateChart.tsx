@@ -5,18 +5,18 @@ import ChartStatView from "../charts/ChartStatView";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
 
-interface CurrencyChartProps {
-  data: {
-    shortLabel: string;
+interface CurrencyExchangeRateChartProps {
+  currencyExchangeData: {
     labels: string[];
     values: number[];
     targetCurrency: string;
+    baseCurrency: string;
     baseCurrencyLongName: string;
     countryFlag: ReactElement;
   }[];
 }
 
-function CurrencyChart(props: CurrencyChartProps) {
+function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   const [selectedItem, setSelectedItem] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -24,11 +24,11 @@ function CurrencyChart(props: CurrencyChartProps) {
   useEffect(() => {
     if (!isHovered) {
       const interval = setInterval(() => {
-        setSelectedItem((prevIndex) => (prevIndex + 1) % props.data.length);
+        setSelectedItem((prevIndex) => (prevIndex + 1) % props.currencyExchangeData.length);
       }, 6000);
       return () => clearInterval(interval);
     }
-  }, [selectedItem, isHovered, props.data.length]);
+  }, [selectedItem, isHovered, props.currencyExchangeData.length]);
 
   //Handle carousel dot click
   const handleDotClick = (index: number) => {
@@ -36,13 +36,24 @@ function CurrencyChart(props: CurrencyChartProps) {
   };
 
   //Return null for an empty dataset
-  if (!props.data || props.data.length === 0) return null;
-  const shortLabel = props.data[selectedItem].shortLabel;
-  const baseCurrencyLongName = props.data[selectedItem].baseCurrencyLongName;
-  const labels = props.data[selectedItem].labels;
-  const values = props.data[selectedItem].values;
-  const targetCurrency = props.data[selectedItem].targetCurrency;
-  const countryFlag = props.data[selectedItem].countryFlag;
+  if (
+    !props.currencyExchangeData ||
+    props.currencyExchangeData.length === 0 ||
+    props.currencyExchangeData[selectedItem].values.length < 2
+  )
+    return null;
+  const shortLabel =
+    props.currencyExchangeData[selectedItem].baseCurrency +
+    "/" +
+    props.currencyExchangeData[selectedItem].targetCurrency;
+  const baseCurrencyLongName = props.currencyExchangeData[selectedItem].baseCurrencyLongName;
+  const labels = props.currencyExchangeData[selectedItem].labels;
+  const values = props.currencyExchangeData[selectedItem].values;
+  const baseCurrency = props.currencyExchangeData[selectedItem].baseCurrency;
+  const targetCurrency = props.currencyExchangeData[selectedItem].targetCurrency;
+  const countryFlag = props.currencyExchangeData[selectedItem].countryFlag;
+
+  const dayliChange = values.at(-1)! - values.at(-2)!;
 
   return (
     <div className='border rounded-lg to-[#ffffff28] border-[#1b2c686c] bg-gradient-to-r from-[#6ff8ed1e] shadow-sm'>
@@ -57,12 +68,16 @@ function CurrencyChart(props: CurrencyChartProps) {
         onTouchEnd={() => setIsHovered(false)}
       >
         <div className='p-2'>
-          <div className='text-center mb-2'>
+          <div className='text-center'>
             {countryFlag}
             <span className='ml-1'>
               {shortLabel} - {baseCurrencyLongName}
             </span>
           </div>
+          <div className={clsx("text-center mb-2 mt-1 text-xl", dayliChange > 0 ? "text-red-400" : "text-emerald-400")}>
+            {`1 ${baseCurrency} = ${values[values.length - 1].toFixed(2)} ${targetCurrency}`}
+          </div>
+
           <div className='text-center my-1'>
             <ChartStatView labels={labels} values={values} />
           </div>
@@ -72,7 +87,7 @@ function CurrencyChart(props: CurrencyChartProps) {
         </div>
       </div>
       <div className='text-center mb-3'>
-        {props.data.map((_, index) => (
+        {props.currencyExchangeData.map((_, index) => (
           <span
             key={index}
             onClick={() => {
@@ -93,4 +108,4 @@ function CurrencyChart(props: CurrencyChartProps) {
   );
 }
 
-export default CurrencyChart;
+export default CurrencyExchangeRateChart;
