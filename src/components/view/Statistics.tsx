@@ -119,95 +119,93 @@ function Statistics(props: StatisticsProps) {
   });
 
   return (
-    <div>
-      <div className='border rounded-lg to-[#ffffff28] border-[#1b2c686c] bg-gradient-to-r from-[#6ff8ed1e] shadow-sm'>
-        <div className='flex flex-row'>
-          <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
-          <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
+    <div className='border sm:rounded-lg to-[#ffffff28] border-[#1b2c686c] bg-gradient-to-r from-[#6ff8ed1e] shadow-sm'>
+      <div className='flex flex-row'>
+        <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
+        <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
+      </div>
+      <div>
+        <div className='mt-4 text-center text-lg'>
+          Lakossági Magyar Állampapír <br /> Kamatstatisztika
         </div>
-        <div>
-          <div className='mt-4 text-center text-lg'>
-            Lakossági Magyar Állampapír <br /> Kamatstatisztika
-          </div>
-          <div className='text-center mb-3'>
-            {startDate.replaceAll("-", ".")} - {new Date().toISOString().split("T")[0].replaceAll("-", ".")}
-          </div>
+        <div className='text-center mb-3'>
+          {startDate.replaceAll("-", ".")} - {new Date().toISOString().split("T")[0].replaceAll("-", ".")}
         </div>
-        <div>
-          <div className='mb-4'>
-            <div className='text-center text-lg'>Átlagos éves forint gyengülés:</div>
+      </div>
+      <div>
+        <div className='mb-4 px-2'>
+          <div className='text-center text-lg'>Átlagos éves forint gyengülés:</div>
 
-            <ul>
-              {props.exchangeData.map((exchangeData, key) => (
-                <li key={key} className='flex justify-center'>
-                  <div className='flex justify-between xl:basis-1/2 basis-full'>
-                    <div>{`${exchangeData.baseCurrencyLongName} - ${exchangeData.baseCurrency}/${exchangeData.targetCurrency}:`}</div>
+          <ul>
+            {props.exchangeData.map((exchangeData, key) => (
+              <li key={key} className='flex justify-center'>
+                <div className='flex justify-between xl:basis-1/2 basis-full'>
+                  <div>{`${exchangeData.baseCurrencyLongName} - ${exchangeData.baseCurrency}/${exchangeData.targetCurrency}:`}</div>
 
-                    <div className='text-red-500 '>
-                      {averageYearlyPercentageIncrease(
-                        exchangeData.labels,
-                        exchangeData.values,
-                        new Date(startDate).getFullYear()
-                      ).toFixed(2) + "%"}
-                    </div>
+                  <div className='text-red-500 '>
+                    {averageYearlyPercentageIncrease(
+                      exchangeData.labels,
+                      exchangeData.values,
+                      new Date(startDate).getFullYear()
+                    ).toFixed(2) + "%"}
                   </div>
-                  <div></div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <div className='text-center text-lg'>Átlagos évenkénti állampapír kamat:</div>
-            <ul>
-              <li className='flex justify-center'>
-                <div className='flex justify-between xl:basis-1/3 basis-full'>
-                  <div>Forint alapú állampapír kamat:</div>
-                  {"*" +
-                    (
-                      filteredHUFAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
-                      filteredHUFAKKBondRates.length
-                    ).toFixed(2) +
-                    "%"}
                 </div>
+                <div></div>
               </li>
-              <li className='flex justify-center'>
-                <div className='flex justify-between xl:basis-1/3 basis-full'>
-                  <div>Euró alapú állampapír kamat:</div>
-                  {"*" +
-                    (
-                      filteredEURAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
-                      filteredEURAKKBondRates.length
-                    ).toFixed(2) +
-                    "%"}
-                </div>
-              </li>
-            </ul>
-          </div>
+            ))}
+          </ul>
         </div>
 
-        <div className='hidden'>
-          <table>
-            <tbody>
-              <tr>
-                <th>Sorozat</th>
-                <th>Név</th>
-                <th>Kamat mértéke</th>
-                <th>EHM</th>
-                <th>Érvényesség kezdete</th>
+        <div className='mb-4 px-2'>
+          <div className='text-center text-lg'>Átlagos évenkénti állampapír kamat:</div>
+          <ul>
+            <li className='flex justify-center'>
+              <div className='flex justify-between xl:basis-1/3 basis-full'>
+                <div>Forint alapú állampapír:</div>
+                {"*" +
+                  (
+                    filteredHUFAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
+                    filteredHUFAKKBondRates.length
+                  ).toFixed(2) +
+                  "%"}
+              </div>
+            </li>
+            <li className='flex justify-center'>
+              <div className='flex justify-between xl:basis-1/3 basis-full'>
+                <div>Euró alapú állampapír:</div>
+                {"*" +
+                  (
+                    filteredEURAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
+                    filteredEURAKKBondRates.length
+                  ).toFixed(2) +
+                  "%"}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className='hidden'>
+        <table>
+          <tbody>
+            <tr>
+              <th>Sorozat</th>
+              <th>Név</th>
+              <th>Kamat mértéke</th>
+              <th>EHM</th>
+              <th>Érvényesség kezdete</th>
+            </tr>
+            {filteredEURAKKBondRates.map((item, key) => (
+              <tr key={key}>
+                <td>{item.name !== item.type ? `${item.type} ${item.name}` : item.name}</td>
+                <td>{item.longName}</td>
+                <td>{item.rate}</td>
+                <td>{item.ehm || null}</td>
+                <td>{item.validFrom}</td>
               </tr>
-              {filteredEURAKKBondRates.map((item, key) => (
-                <tr key={key}>
-                  <td>{item.name !== item.type ? `${item.type} ${item.name}` : item.name}</td>
-                  <td>{item.longName}</td>
-                  <td>{item.rate}</td>
-                  <td>{item.ehm || null}</td>
-                  <td>{item.validFrom}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
