@@ -4,7 +4,49 @@ import Statistics from "../components/view/Statistics";
 import { BondType } from "../components/view/Statistics";
 
 export default async function Home() {
-  // Get exchange data from frankfurt API
+  //#region Get Data
+
+  // Get US treasury data
+  async function getUSTreasuryData(): Promise<{ date: string; value: number }[]> {
+    const url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS5&cosd=2014-01-01&fq=Daily";
+
+    try {
+      const response = await fetch(url, {
+        cache: "force-cache",
+        headers: {
+          "Cache-Control": "public, max-age=86400",
+        },
+      });
+
+      // Check if the response is OK (status in the range 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const csvData = await response.text();
+      const lines = csvData.split("\n");
+
+      const result: { date: string; value: number }[] = [];
+
+      // Skip the header and iterate over each line
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line) {
+          // Check for non-empty line
+          const [date, valueStr] = line.split(",");
+          const value = parseFloat(valueStr);
+          result.push({ date, value });
+        }
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error fetching treasury data:", error);
+      return []; // Return an empty array on error
+    }
+  }
+
+  // Get exchange data from frankfurt API (ECB)
   async function getCurrencyExchangeRateData() {
     const dataToRequest = [
       {
@@ -92,7 +134,7 @@ export default async function Home() {
     );
   }
 
-  //#region AKK
+  // Get AKK treasury data
   async function getAKKBondData() {
     const res = await fetch(`https://www.allampapir.hu/api/retail_interest/m/get_all_data`, {
       cache: "force-cache",
@@ -107,10 +149,10 @@ export default async function Home() {
 
     const data = await res.json();
     const bonds: BondType[] = data.data.data;
-    return bonds.map((bond) => ({ ...bond, longName: bondTypeMapping[bond.type] || bond.name }));
+    return bonds.map((bond) => ({ ...bond, longName: hungarianBondTypeMapping[bond.type] || bond.name }));
   }
 
-  const bondTypeMapping: Record<string, string> = {
+  const hungarianBondTypeMapping: Record<string, string> = {
     "1MÁP": "1 éves Magyar Állampapír Plusz",
     PMÁP: "Prémium Magyar Állampapír",
     BMÁP: "Bónusz Magyar Állampapír",
@@ -133,10 +175,10 @@ export default async function Home() {
     .filter((item) => item.values.length > 0);
 
   const akkBondData = await getAKKBondData();
-  console.log(currencyExchangeData);
-  console.log(akkBondData);
   if (currencyExchangeData.length === 0 || akkBondData.length === 0)
     throw new Error("Failed to get data from the server");
+
+  const usTreasuryData = await getUSTreasuryData();
 
   return (
     <main className='w-full min-h-svh'>
@@ -146,7 +188,11 @@ export default async function Home() {
       </div>
       <div className='flex flex-col lg:flex-row  min-h-svh'>
         <div className='sm:flex-1 border-r border-[#1b2c686c]'>
-          <Statistics exchangeData={currencyExchangeData} bondData={akkBondData} />
+          <Statistics
+            exchangeData={currencyExchangeData}
+            hungarianBondData={akkBondData}
+            usTreasuryData={usTreasuryData}
+          />
         </div>
         <div className='sm:flex-1'>
           <CurrencyExchangeRateChart exchangeData={currencyExchangeData} />

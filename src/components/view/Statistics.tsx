@@ -10,7 +10,11 @@ interface StatisticsProps {
     baseCurrencyLongName: string;
     countryFlag: ReactElement;
   }[];
-  bondData: BondType[] | null;
+  hungarianBondData: BondType[] | null;
+  usTreasuryData: {
+    date: string;
+    value: number;
+  }[];
 }
 
 export type BondType = {
@@ -105,24 +109,50 @@ function Statistics(props: StatisticsProps) {
   //Return null for an empty dataset
   if (!props.exchangeData || props.exchangeData.length === 0 || props.exchangeData[0].values.length < 2) return null;
 
-  if (!props.bondData || props.bondData.length === 0) return null;
+  if (!props.hungarianBondData || props.hungarianBondData.length === 0) return null;
 
+  const HUFWeakening = new Map<string, number>();
   const startDate = "2014-01-01";
 
+  props.exchangeData.forEach((item) => {
+    HUFWeakening.set(
+      item.baseCurrency,
+      averageYearlyPercentageIncrease(item.labels, item.values, new Date(startDate).getFullYear())
+    );
+  });
+
   const filteredHUFAKKBondRates = filterAKKBonds({
-    bonds: props.bondData,
+    bonds: props.hungarianBondData,
     excludeTypeFilter: ["BABA", "EMÁP", "PEMÁP"],
     startDate: startDate,
   });
 
   const filteredEURAKKBondRates = filterAKKBonds({
-    bonds: props.bondData,
+    bonds: props.hungarianBondData,
     typeFilter: ["EMÁP", "PEMÁP"],
     startDate: startDate,
   });
 
+  const filteredUSTreasuryData = props.usTreasuryData.filter(
+    (item) => new Date(item.date) > new Date(startDate) && Number.isSafeInteger(item.value)
+  );
+
+  const EURBondRate = (
+    filteredEURAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
+    filteredEURAKKBondRates.length
+  ).toFixed(2);
+
+  const USBondRate = (
+    filteredUSTreasuryData.reduce((sum, rating) => sum + rating.value, 0) / filteredUSTreasuryData.length
+  ).toFixed(2);
+
+  const HUNBondRate = (
+    filteredHUFAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
+    filteredHUFAKKBondRates.length
+  ).toFixed(2);
+
   return (
-    <div className='h-full'>
+    <div className='h-full border-b-2 lg:border-b-0 mb-4 lg:mb-0'>
       <div>
         <div className='mt-4 text-center text-lg'>
           Lakossági Magyar Állampapír <br /> Kamatstatisztika
@@ -144,13 +174,7 @@ function Statistics(props: StatisticsProps) {
                     {`${exchangeData.baseCurrencyLongName} - ${exchangeData.baseCurrency}/${exchangeData.targetCurrency}:`}
                   </div>
 
-                  <div className='text-red-500 '>
-                    {averageYearlyPercentageIncrease(
-                      exchangeData.labels,
-                      exchangeData.values,
-                      new Date(startDate).getFullYear()
-                    ).toFixed(2) + "%"}
-                  </div>
+                  <div className='text-red-500 '>{HUFWeakening.get(exchangeData.baseCurrency)?.toFixed(2) + "%"}</div>
                 </div>
                 <div></div>
               </li>
@@ -162,31 +186,34 @@ function Statistics(props: StatisticsProps) {
           <div className='text-center text-lg mb-2'>Átlagos évenkénti állampapír kamat:</div>
           <ul className='mb-2'>
             <li className='flex justify-center'>
-              <div className='flex justify-between xl:basis-1/3 basis-full'>
+              <div className='flex justify-between xl:basis-1/2 basis-full'>
                 <div>
                   <span className='mr-2 fi fi-hu' />
-                  Forint alapú állampapír:
+                  Forint Magyar állampapír:
                 </div>
-                {"*" +
-                  (
-                    filteredHUFAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
-                    filteredHUFAKKBondRates.length
-                  ).toFixed(2) +
-                  "%"}
+                <div className='my-auto'>{"*" + HUNBondRate + "%"}</div>
               </div>
             </li>
             <li className='flex justify-center'>
-              <div className='flex justify-between xl:basis-1/3 basis-full'>
+              <div className='flex justify-between xl:basis-1/2 basis-full'>
                 <div>
                   <span className='mr-2 fi fi-eu' />
-                  Euró alapú állampapír:
+                  Euró Magyar állampapír (EMÁP,PEMÁP):
                 </div>
-                {(
-                  filteredEURAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
-                  filteredEURAKKBondRates.length
-                ).toFixed(2) + "%"}
+                <div className='my-auto'>{EURBondRate + "%"}</div>
               </div>
             </li>
+            {filteredUSTreasuryData.length > 0 ? (
+              <li className='flex justify-center'>
+                <div className='flex justify-between xl:basis-1/2 basis-full'>
+                  <div>
+                    <span className='mr-2 fi fi-us' />
+                    Amerikai 5 éves állampapír:
+                  </div>
+                  <div className='my-auto'>{USBondRate + "%"}</div>
+                </div>
+              </li>
+            ) : null}
           </ul>
           <div className='text-sm text-gray-500 mx-4 text-center'>
             *A számítás során a babakötvények kamatait nem vettük figyelembe, mivel ezek kizárólag gyermekek számára
@@ -194,29 +221,40 @@ function Statistics(props: StatisticsProps) {
           </div>
         </div>
       </div>
-      <div></div>
-
-      <div className='hidden'>
-        <table>
-          <tbody>
-            <tr>
-              <th>Sorozat</th>
-              <th>Név</th>
-              <th>Kamat mértéke</th>
-              <th>EHM</th>
-              <th>Érvényesség kezdete</th>
-            </tr>
-            {filteredEURAKKBondRates.map((item, key) => (
-              <tr key={key}>
-                <td>{item.name !== item.type ? `${item.type} ${item.name}` : item.name}</td>
-                <td>{item.longName}</td>
-                <td>{item.rate}</td>
-                <td>{item.ehm || null}</td>
-                <td>{item.validFrom}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className='text-center'>
+        <div className='text-lg border-t-2 p-4'>
+          A forint átlagos éves gyengülése az euróhoz képest, valamint az euróban denominált magyar állampapírok átlagos
+          éves kamata
+        </div>
+        <div className='p-2 flex items-center justify-center flex-col sm:flex-row'>
+          <div className=''>
+            <div>
+              <span className='fi fi-eu' />
+            </div>
+            <div>{`${HUFWeakening.get("EUR")?.toFixed(2)}% (EUR/HUF) + ${EURBondRate}% (EMÁP) =
+          ${((HUFWeakening.get("EUR") ?? 0) + Number(EURBondRate)).toFixed(2)}%`}</div>
+          </div>
+          <div className='text-6xl text-green-500 font-bold sm:mt-6 mx-2'>
+            {(HUFWeakening.get("EUR") ?? 0) + Number(EURBondRate) > Number(HUNBondRate) ? ">" : "<"}
+          </div>
+          <div className=''>
+            <div>
+              <span className='fi fi-hu' />
+            </div>
+            <div>{`Forint alapú állampapír kamat: ${HUNBondRate}%`}</div>
+          </div>
+        </div>
+        <div>
+          <div className='px-4 sm:px-8 mb-6'>
+            {(HUFWeakening.get("EUR") ?? 0) + Number(EURBondRate) > Number(HUNBondRate)
+              ? `Ez alapján a magyar euródenominált állampapírokban tartott vagyon nagyobb hozamot ért el a vizsgált
+            időszakban, mivel a forint euróval szembeni gyengülése, valamint az euró alapú állampapírok kedvező hozamai együttesen
+            átlagosan magasabb hozamot biztosítottak mint a forint alapú állampapírok.`
+              : `A vizsgált időszak eredményei szerint a forint alapú állampapírokban való megtakarítás volt a kedvezőbb 
+              választás, mivel ezek stabilabb hozamot kínáltak, 
+              így biztonságosabb alternatívát jelentettek a devizakockázat elkerülése érdekében.`}
+          </div>
+        </div>
       </div>
     </div>
   );
