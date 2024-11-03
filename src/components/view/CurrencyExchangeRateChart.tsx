@@ -50,7 +50,7 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   const dayliChange = values.at(-1)! - values.at(-2)!;
 
   return (
-    <div className='h-full'>
+    <div className='h-full border-b-2 lg:border-b-0'>
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

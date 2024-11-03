@@ -152,7 +152,7 @@ function Statistics(props: StatisticsProps) {
   ).toFixed(2);
 
   return (
-    <div className='h-full border-b-2 lg:border-b-0 mb-4 lg:mb-0'>
+    <div className='h-full mb-4 lg:mb-0'>
       <div>
         <div className='mt-4 text-center text-lg'>
           Lakossági Magyar Állampapír <br /> Kamatstatisztika

@@ -186,16 +186,16 @@ export default async function Home() {
         <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
         <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
       </div>
-      <div className='flex flex-col lg:flex-row  min-h-svh'>
+      <div className='flex flex-col lg:flex-row-reverse  min-h-svh'>
+        <div className='sm:flex-1'>
+          <CurrencyExchangeRateChart exchangeData={currencyExchangeData} />
+        </div>
         <div className='sm:flex-1 border-r border-[#1b2c686c]'>
           <Statistics
             exchangeData={currencyExchangeData}
             hungarianBondData={akkBondData}
             usTreasuryData={usTreasuryData}
           />
-        </div>
-        <div className='sm:flex-1'>
-          <CurrencyExchangeRateChart exchangeData={currencyExchangeData} />
         </div>
       </div>
       <div className='flex flex-row'>
