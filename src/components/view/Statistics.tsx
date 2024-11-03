@@ -219,7 +219,7 @@ function Statistics(props: StatisticsProps) {
             ) : null}
           </ul>
           <div className='text-sm text-gray-500 mx-4 text-center'>
-            *A számítás során a babakötvények kamatait nem vettük figyelembe, mivel ezek kizárólag gyermekek számára
+            *A számítás során a babakötvények kamatai nem lettek figyelembevéve, mivel ezek kizárólag gyermekek számára
             vásárolhatók meg.
           </div>
         </div>
