@@ -174,7 +174,10 @@ function Statistics(props: StatisticsProps) {
                     {`${exchangeData.baseCurrencyLongName} - ${exchangeData.baseCurrency}/${exchangeData.targetCurrency}:`}
                   </div>
 
-                  <div className='text-red-500 '>{HUFWeakening.get(exchangeData.baseCurrency)?.toFixed(2) + "%"}</div>
+                  <div className='text-red-500 '>
+                    {Number(HUFWeakening.get(exchangeData.baseCurrency)) > 0 ? "+" : ""}
+                    {HUFWeakening.get(exchangeData.baseCurrency)?.toFixed(2) + "%"}
+                  </div>
                 </div>
                 <div></div>
               </li>
