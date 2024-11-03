@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /
+
+User-agent: Bingbot
+User-agent: Googlebot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: YandexBot
+User-agent: facebot
+User-agent: Applebot
+Disallow:
+
+Sitemap: https://huf.domkss.dev/sitemap.xml
