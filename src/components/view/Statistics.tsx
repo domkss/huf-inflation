@@ -102,7 +102,10 @@ function averageYearlyPercentageIncrease(dates: string[], values: number[], from
 }
 
 function Statistics(props: StatisticsProps) {
-  if (!props.bondData) return null;
+  //Return null for an empty dataset
+  if (!props.exchangeData || props.exchangeData.length === 0 || props.exchangeData[0].values.length < 2) return null;
+
+  if (!props.bondData || props.bondData.length === 0) return null;
 
   const startDate = "2014-01-01";
 
@@ -119,11 +122,7 @@ function Statistics(props: StatisticsProps) {
   });
 
   return (
-    <div className='h-full border border-[#1b2c686c] shadow-sm'>
-      <div className='flex flex-row'>
-        <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
-        <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
-      </div>
+    <div className='h-full'>
       <div>
         <div className='mt-4 text-center text-lg'>
           Lakossági Magyar Állampapír <br /> Kamatstatisztika
@@ -134,13 +133,16 @@ function Statistics(props: StatisticsProps) {
       </div>
       <div>
         <div className='mb-4 px-2'>
-          <div className='text-center text-lg'>Átlagos éves forint gyengülés:</div>
+          <div className='text-center text-lg mb-2'>Átlagos éves forint gyengülés:</div>
 
           <ul>
             {props.exchangeData.map((exchangeData, key) => (
               <li key={key} className='flex justify-center'>
                 <div className='flex justify-between xl:basis-1/2 basis-full'>
-                  <div>{`${exchangeData.baseCurrencyLongName} - ${exchangeData.baseCurrency}/${exchangeData.targetCurrency}:`}</div>
+                  <div>
+                    <span className='mr-2'>{exchangeData.countryFlag}</span>
+                    {`${exchangeData.baseCurrencyLongName} - ${exchangeData.baseCurrency}/${exchangeData.targetCurrency}:`}
+                  </div>
 
                   <div className='text-red-500 '>
                     {averageYearlyPercentageIncrease(
@@ -157,11 +159,14 @@ function Statistics(props: StatisticsProps) {
         </div>
 
         <div className='mb-4 px-2'>
-          <div className='text-center text-lg'>Átlagos évenkénti állampapír kamat:</div>
-          <ul>
+          <div className='text-center text-lg mb-2'>Átlagos évenkénti állampapír kamat:</div>
+          <ul className='mb-2'>
             <li className='flex justify-center'>
               <div className='flex justify-between xl:basis-1/3 basis-full'>
-                <div>Forint alapú állampapír:</div>
+                <div>
+                  <span className='mr-2 fi fi-hu' />
+                  Forint alapú állampapír:
+                </div>
                 {"*" +
                   (
                     filteredHUFAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
@@ -172,18 +177,24 @@ function Statistics(props: StatisticsProps) {
             </li>
             <li className='flex justify-center'>
               <div className='flex justify-between xl:basis-1/3 basis-full'>
-                <div>Euró alapú állampapír:</div>
-                {"*" +
-                  (
-                    filteredEURAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
-                    filteredEURAKKBondRates.length
-                  ).toFixed(2) +
-                  "%"}
+                <div>
+                  <span className='mr-2 fi fi-eu' />
+                  Euró alapú állampapír:
+                </div>
+                {(
+                  filteredEURAKKBondRates.reduce((sum, rating) => sum + (rating.ehm_val || rating.rate_val), 0) /
+                  filteredEURAKKBondRates.length
+                ).toFixed(2) + "%"}
               </div>
             </li>
           </ul>
+          <div className='text-sm text-gray-500 mx-4 text-center'>
+            *A számítás során a babakötvények kamatait nem vettük figyelembe, mivel ezek kizárólag gyermekek számára
+            vásárolhatók meg.
+          </div>
         </div>
       </div>
+      <div></div>
 
       <div className='hidden'>
         <table>

@@ -1,3 +1,4 @@
+import Footer from "@/components/view/Footer";
 import CurrencyExchangeRateChart from "../components/view/CurrencyExchangeRateChart";
 import Statistics from "../components/view/Statistics";
 import { BondType } from "../components/view/Statistics";
@@ -59,6 +60,7 @@ export default async function Home() {
         const baseCurrencyLongName = item.baseCurrencyLongName;
         const countryFlag = item.countryFlag;
         // Fetch data from the Frankfurter API
+
         const res = await fetch(
           `https://api.frankfurter.app/${startDate}..${endDate}?base=${baseCurrency}&symbols=${targetCurrency}`,
           {
@@ -67,11 +69,11 @@ export default async function Home() {
               "Cache-Control": "public, max-age=86400",
             },
           }
-        );
+        ).catch((e) => ({ ok: false, statusText: e, status: null }));
 
-        if (!res.ok) {
+        if (!res.ok || res.status !== 200) {
           console.error("Failed to fetch exchange rates:", res.statusText);
-          return null;
+          return Promise.resolve(null);
         }
 
         const data = await res.json();
@@ -79,7 +81,7 @@ export default async function Home() {
 
         if (!data || !rates) {
           console.error("Failed get data from Json");
-          return null;
+          return Promise.resolve(null);
         }
 
         const labels = Object.keys(data.rates);
@@ -97,10 +99,10 @@ export default async function Home() {
       headers: {
         "Cache-Control": "public, max-age=86400",
       },
-    });
-    if (!res.ok) {
+    }).catch((e) => ({ ok: false, statusText: e, status: null }));
+    if (!res.ok || res.status !== 200) {
       console.error("Failed to fetch exchange rates:", res.statusText);
-      return null;
+      return [];
     }
 
     const data = await res.json();
@@ -131,17 +133,30 @@ export default async function Home() {
     .filter((item) => item.values.length > 0);
 
   const akkBondData = await getAKKBondData();
+  console.log(currencyExchangeData);
+  console.log(akkBondData);
+  if (currencyExchangeData.length === 0 || akkBondData.length === 0)
+    throw new Error("Failed to get data from the server");
 
   return (
     <main className='w-full min-h-svh'>
+      <div className='flex flex-row'>
+        <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
+        <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
+      </div>
       <div className='flex flex-col lg:flex-row  min-h-svh'>
-        <div className='sm:flex-1'>
+        <div className='sm:flex-1 border-r border-[#1b2c686c]'>
           <Statistics exchangeData={currencyExchangeData} bondData={akkBondData} />
         </div>
-        <div className='flex-1'>
-          <CurrencyExchangeRateChart currencyExchangeData={currencyExchangeData} />
+        <div className='sm:flex-1'>
+          <CurrencyExchangeRateChart exchangeData={currencyExchangeData} />
         </div>
       </div>
+      <div className='flex flex-row'>
+        <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
+        <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
+      </div>
+      <Footer />
     </main>
   );
 }

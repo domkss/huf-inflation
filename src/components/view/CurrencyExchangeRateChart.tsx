@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { useState, useEffect } from "react";
 
 interface CurrencyExchangeRateChartProps {
-  currencyExchangeData: {
+  exchangeData: {
     labels: string[];
     values: number[];
     targetCurrency: string;
@@ -24,11 +24,11 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   useEffect(() => {
     if (!isHovered) {
       const interval = setInterval(() => {
-        setSelectedItem((prevIndex) => (prevIndex + 1) % props.currencyExchangeData.length);
+        setSelectedItem((prevIndex) => (prevIndex + 1) % props.exchangeData.length);
       }, 6000);
       return () => clearInterval(interval);
     }
-  }, [selectedItem, isHovered, props.currencyExchangeData.length]);
+  }, [selectedItem, isHovered, props.exchangeData.length]);
 
   //Handle carousel dot click
   const handleDotClick = (index: number) => {
@@ -36,31 +36,21 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   };
 
   //Return null for an empty dataset
-  if (
-    !props.currencyExchangeData ||
-    props.currencyExchangeData.length === 0 ||
-    props.currencyExchangeData[selectedItem].values.length < 2
-  )
+  if (!props.exchangeData || props.exchangeData.length === 0 || props.exchangeData[selectedItem].values.length < 2)
     return null;
   const shortLabel =
-    props.currencyExchangeData[selectedItem].baseCurrency +
-    "/" +
-    props.currencyExchangeData[selectedItem].targetCurrency;
-  const baseCurrencyLongName = props.currencyExchangeData[selectedItem].baseCurrencyLongName;
-  const labels = props.currencyExchangeData[selectedItem].labels;
-  const values = props.currencyExchangeData[selectedItem].values;
-  const baseCurrency = props.currencyExchangeData[selectedItem].baseCurrency;
-  const targetCurrency = props.currencyExchangeData[selectedItem].targetCurrency;
-  const countryFlag = props.currencyExchangeData[selectedItem].countryFlag;
+    props.exchangeData[selectedItem].baseCurrency + "/" + props.exchangeData[selectedItem].targetCurrency;
+  const baseCurrencyLongName = props.exchangeData[selectedItem].baseCurrencyLongName;
+  const labels = props.exchangeData[selectedItem].labels;
+  const values = props.exchangeData[selectedItem].values;
+  const baseCurrency = props.exchangeData[selectedItem].baseCurrency;
+  const targetCurrency = props.exchangeData[selectedItem].targetCurrency;
+  const countryFlag = props.exchangeData[selectedItem].countryFlag;
 
   const dayliChange = values.at(-1)! - values.at(-2)!;
 
   return (
-    <div className='h-full border border-[#1b2c686c] shadow-sm'>
-      <div className='flex flex-row'>
-        <div className='h-[1px] w-full bg-gradient-to-r from-transparent via-pink-400 to-violet-500'></div>
-        <div className='h-[1px] w-full bg-gradient-to-r from-violet-500 to-transparent'></div>
-      </div>
+    <div className='h-full'>
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -87,7 +77,7 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
         </div>
       </div>
       <div className='text-center mb-3'>
-        {props.currencyExchangeData.map((_, index) => (
+        {props.exchangeData.map((_, index) => (
           <span
             key={index}
             onClick={() => {
