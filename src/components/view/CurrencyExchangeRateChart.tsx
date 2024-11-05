@@ -44,6 +44,7 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   const maxSwipeDuration = 500; // maximum allowed swipe duration in ms
 
   const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setIsHovered(true);
     touchStartX.current = e.targetTouches[0].clientX;
     touchStartTime.current = new Date().getTime(); // Record the time touch starts
   };
@@ -53,6 +54,7 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
   };
 
   const onTouchEnd = () => {
+    setIsHovered(false);
     const distance = touchStartX.current - touchEndX.current;
     const swipeDuration = new Date().getTime() - touchStartTime.current;
 
