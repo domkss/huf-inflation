@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import CurvedLineChart from "../charts/CurvedLineChart";
 import ChartStatView from "../charts/ChartStatView";
 import clsx from "clsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface CurrencyExchangeRateChartProps {
   exchangeData: {
@@ -35,6 +35,46 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
     setSelectedItem(index);
   };
 
+  //#region Swipe Handling
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const touchStartTime = useRef(0);
+
+  const minSwipeDistance = 50; // minimum swipe distance in pixels
+  const maxSwipeDuration = 500; // maximum allowed swipe duration in ms
+
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchStartTime.current = new Date().getTime(); // Record the time touch starts
+  };
+
+  const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    const distance = touchStartX.current - touchEndX.current;
+    const swipeDuration = new Date().getTime() - touchStartTime.current;
+
+    // Validate swipe duration and distance
+    if (Math.abs(distance) > minSwipeDistance && swipeDuration <= maxSwipeDuration) {
+      if (distance > 0) {
+        onSwipeLeft();
+      } else {
+        onSwipeRight();
+      }
+    }
+  };
+
+  const onSwipeLeft = () => {
+    setSelectedItem((prevIndex) => (prevIndex + 1) % props.exchangeData.length);
+  };
+
+  const onSwipeRight = () => {
+    setSelectedItem((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : props.exchangeData.length - 1));
+  };
+  //#endregion
+
   //Return null for an empty dataset
   if (!props.exchangeData || props.exchangeData.length === 0 || props.exchangeData[selectedItem].values.length < 2)
     return null;
@@ -54,8 +94,9 @@ function CurrencyExchangeRateChart(props: CurrencyExchangeRateChartProps) {
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onTouchStart={() => setIsHovered(true)}
-        onTouchEnd={() => setIsHovered(false)}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         <div className='p-2'>
           <div className='text-center'>
