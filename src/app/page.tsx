@@ -72,6 +72,13 @@ export default async function Home() {
       },
       {
         startDate: "2011-05-01",
+        baseCurrency: "CNY",
+        targetCurrency: "HUF",
+        baseCurrencyLongName: "Kínai jüan",
+        countryFlag: <span className='fi fi-cn shadow-sm' />,
+      },
+      {
+        startDate: "2011-05-01",
         baseCurrency: "CZK",
         targetCurrency: "HUF",
         baseCurrencyLongName: "Cseh korona",
@@ -86,10 +93,10 @@ export default async function Home() {
       },
       {
         startDate: "2011-05-01",
-        baseCurrency: "CNY",
+        baseCurrency: "RON",
         targetCurrency: "HUF",
-        baseCurrencyLongName: "Kínai jüan",
-        countryFlag: <span className='fi fi-cn shadow-sm' />,
+        baseCurrencyLongName: "Román lej",
+        countryFlag: <span className='fi fi-ro shadow-sm' />,
       },
     ];
 

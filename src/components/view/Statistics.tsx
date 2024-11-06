@@ -121,6 +121,13 @@ function Statistics(props: StatisticsProps) {
     );
   });
 
+  const sortedExchangeData = props.exchangeData.sort((a, b) => {
+    const valueA = HUFWeakening.get(a.baseCurrency) || 0;
+    const valueB = HUFWeakening.get(b.baseCurrency) || 0;
+
+    return valueB - valueA;
+  });
+
   const filteredHUFAKKBondRates = filterAKKBonds({
     bonds: props.hungarianBondData,
     excludeTypeFilter: ["BABA", "EMÁP", "PEMÁP"],
@@ -166,7 +173,7 @@ function Statistics(props: StatisticsProps) {
           <div className='text-center text-lg mb-2'>Átlagos éves forint gyengülés:</div>
 
           <ul>
-            {props.exchangeData.map((exchangeData, key) => (
+            {sortedExchangeData.map((exchangeData, key) => (
               <li key={key} className='flex justify-center'>
                 <div className='flex justify-between xl:basis-1/2 basis-full'>
                   <div>
