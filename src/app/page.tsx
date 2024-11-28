@@ -3,6 +3,8 @@ import CurrencyExchangeRateChart from "../components/view/CurrencyExchangeRateCh
 import Statistics from "../components/view/Statistics";
 import { BondType } from "../components/view/Statistics";
 
+export const revalidate = 86400;
+
 export default async function Home() {
   //#region Get Data
 
@@ -213,5 +215,3 @@ export default async function Home() {
     </main>
   );
 }
-
-export const revalidate = 86400;
