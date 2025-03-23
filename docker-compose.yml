@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+    container_name: huf-inflation-app-container
+    networks:
+      huf-app-network:
+        ipv4_address: 172.23.0.10
+    ports:
+      - "1848:3000"
+    environment:
+      - NODE_ENV=production
+    restart: always
+
+networks:
+  huf-app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.23.0.0/16"
+          gateway: 172.23.0.1
