@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Erős nemzeti valuta – Más néven Forint",
+  title: "Gyengülő Nemzeti Valuta – A Forint Helyzete",
   description:
     "Statisztikák a forint gyengüléséről és más globális devizapárokkal való összehasonlítás. Forint- és euróalapú magyar állampapírhozamok összehasonlítása.",
 };
